@@ -126,18 +126,25 @@ export default class SessionController {
             if (reqEmail != email) CustomError.createError({ statusCode: 401, name: "Admin users cant swap roles", cause: generateErrorInfo.unauthorized(), code: 6});
             
             let dbUser = await um.getOne({email});
-            req.logger.debug("Consegui los datos del usuario");
             
             let user = {
                 first_name: dbUser.first_name,
                 last_name: dbUser.last_name,
                 role: dbUser.role,
                 email: dbUser.email,
-                cart: dbUser.cart
+                cart: dbUser.cart,
+                documents: dbUser.documents
             }
+
             
+
             if (dbUser.role == "admin") CustomError.createError({ statusCode: 401, name: "Admin users cant swap roles", cause: generateErrorInfo.unauthorized(), code: 6});
             if (dbUser.role == "user") {
+
+                console.log(user.documents)
+
+                if (user.documents.lenght != 3) return res.send({ status: 'error', message: "Necesitas subir todos los documentos"});
+
                 dbUser.role = "premium";
                 let result = await um.editOne(email, dbUser);
                 
@@ -172,21 +179,18 @@ export default class SessionController {
         try {
             req.logger.http(`${req.method} at ${req.url} - ${new Date().toLocaleDateString()}`);
 
+            if (Object.getOwnPropertyNames(req.files).length == 0) return res.send({status: 'error', message: 'No se enviaron documentos'})
+
             let email = req.params.uid;
         
             let user = await um.getOne({email});
-        
-            // console.log(user.documents);
-            // console.log(req.files);
-        
-            user.documents.push({name: 'identification'})
         
             let isValid = true;
             let repeatedDocs = [];
         
             user.documents.forEach(element => {
                 if (req.files[element.name]) {
-                    repeatedDocs.push(element.name)
+                    repeatedDocs.push(element.name);
                     isValid = false;
                 }
             })
@@ -203,8 +207,49 @@ export default class SessionController {
         try {
             req.logger.http(`${req.method} at ${req.url} - ${new Date().toLocaleDateString()}`);
 
-            console.log(req.files);
-            console.log('Llegue al postDocuments');
+            let user = await um.getOne({email: req.user.email});
+
+            let userDocuments = [];
+
+            user.documents.forEach(element => {
+                userDocuments.push(element.name);
+            })
+            
+            if (req.files.identification) {
+                let exists = userDocuments.findIndex(element => element == 'identification');
+                let extension = req.files.identification[0].originalname.split('.');
+                let file = {name: 'identification', reference: `/public/userImages/${req.user.email}-identification.${extension[1]}`};
+
+                if (exists != -1) {
+                    user.documents[exists] = file;
+                } else {
+                    user.documents.push(file);
+                }
+            }
+            if (req.files.location) {
+                let exists = userDocuments.findIndex(element => element == 'location');
+                let extension = req.files.location[0].originalname.split('.');
+                let file = {name: 'location', reference: `/public/userImages/${req.user.email}-location.${extension[1]}`};
+
+                if (exists != -1) {
+                    user.documents[exists] = file;
+                } else {
+                    user.documents.push(file);
+                }
+            }
+            if (req.files.accState) {
+                let exists = userDocuments.findIndex(element => element == 'accState');
+                let extension = req.files.accState[0].originalname.split('.');
+                let file = {name: 'accState', reference: `/public/userImages/${req.user.email}-accState.${extension[1]}`};
+
+                if (exists != -1) {
+                    user.documents[exists] = file;
+                } else {
+                    user.documents.push(file);
+                }
+            }
+
+            um.editOne(user.email, user);
 
             res.send({status:'Ok', message: 'Archivos guardados correctamente'})
         } catch (error) {

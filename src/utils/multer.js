@@ -6,21 +6,16 @@ const storage = multer.diskStorage({
         let route = 'documents';
         if (file.fieldname == 'thumbnail') route = 'profile';
         if (file.fieldname == 'image') route = 'images';
-        console.log(route);
         cb(null, __dirname + `/public/userImages/${route}`);
-        //cb(null, `./public/userImages/${route}`)
     },
     filename: function(req, file, cb) {
         let user = req.user;
         let filename = `${Date.now()}-${file.originalname}`
         if (file.fieldname != 'image' && file.fieldname != 'thumbnail') filename = `${user.email}-${file.fieldname}`
         
-        let fileExtension = file.mimetype.split('/');
+        let fileExtension = file.originalname.split('.');
 
         cb(null, `${filename}.${fileExtension[1]}`);
-
-        //const fileExtension = file.mimetype.split('/')[file.mimetype.split('/').length-1];
-        //cb(null, `${req.user.email}-${file.fieldname}.${fileExtension}`);
     }
 })
 

@@ -12,10 +12,21 @@ form.addEventListener('submit', event => {
             fetch(`/api/session/${email}/documents`, {method: 'POST', body: data}).then(response => response.json()).then(json => {
                 console.log(json)
                 if (json.status == 'Ok') Swal.fire({icon: 'success', title: 'Archivos subidos correctamente'});
-                else Swal.fire({icon: 'error', title: json.message});
+                else Swal.fire({icon: 'info', title: json.message});
             })
         } else {
-            Swal.fire({icon: 'error', title: 'Hay campos repetidos', text: json.message});
+            if (json.message == 'No se enviaron documentos') return Swal.fire({icon: 'error', title: 'No se enviaron documentos'})
+            Swal.fire({icon: 'warning', title: 'Hay campos repetidos', text: json.message, showDenyButton: true, confirmButtonText: 'Save', denyButtonText: `Don't save`}).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/session/${email}/documents`, {method: 'POST', body: data}).then(response => response.json()).then(json => {
+                        console.log(json)
+                        if (json.status == 'Ok') Swal.fire({icon: 'success', title: 'Archivos subidos correctamente'});
+                        else Swal.fire({icon: 'info', title: json.message});
+                    })
+                } else if (result.isDenied) {
+                  Swal.fire('Se ha cancelado la operacion', '', 'error')
+                }
+              })
         }
     })
 })

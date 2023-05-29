@@ -21,5 +21,5 @@ Modificar /api/users/premium/:uid para que solo permita actualizar al usuario si
 Cosas a incluir:
     Ver foto de perfil del usuario
     Anadir link a documentos del usuario
-    Anadir vista para crear usuario
+    Anadir vista para crear producto
     

@@ -17,6 +17,7 @@
             <p>Tu rol es administrador</p>
         </div>
     {{else}}
+        <button class="swapRoleButton" onclick="window.open('/documents')">Sube tus documentos aqui</button>
         <button class="swapRoleButton" onclick="swapRole()">Cambia a {{#if isPremium}}usuario corriente{{else}}usuario premium{{/if}}</button>
     {{/if}}
 
