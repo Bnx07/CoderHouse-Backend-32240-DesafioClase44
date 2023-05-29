@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
         default: 'user'
     },
     last_connection: {
-        type: Date
+        type: String
     },
     documents: {
         type: [

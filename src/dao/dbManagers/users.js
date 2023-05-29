@@ -16,7 +16,11 @@ export default class userManager {
         return result;
     }
 
-    editLastConnection = async(email, lastConnection) => {
-        let result = userModel.updateOne({email}, {$set: {last_connection: lastConnection}})
+    editLastConnection = async(user, lastConnection) => {
+        user.last_connection = lastConnection;
+
+        let result = await userModel.updateOne({email: user.email}, user)
+
+        return result;
     }
 }

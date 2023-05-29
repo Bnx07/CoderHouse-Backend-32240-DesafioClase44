@@ -212,8 +212,6 @@ export default class ViewController {
     getUserDocuments = (req, res) => {
         req.logger.http(`${req.method} at ${req.url} - ${new Date().toLocaleDateString()}`);
         
-        console.log("HOLA, LLEGUE AL USER DOCUMENTS")
-
         try {
             let isLogin;
             let user;

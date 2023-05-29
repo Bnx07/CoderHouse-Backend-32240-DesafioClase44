@@ -14,8 +14,25 @@
 </header>
 <main>
     {{#if isLogin}}
-        <h1>{{user.email}}</h1>
+        <h1>Ahora has iniciado sesion con <span id="userEmail">{{user.email}}</span></h1>
+        <form class="form" id="postDocumentsForm" enctype="multipart/form-data">
+            <div class="formOrder">
+
+                <h3>Documentos de usuario</h3><br>
+                <p class="formText">Identificacion</p><input type="file" name="identification" id="">
+                <p class="formText">Comprobante de domicilio</p><input type="file" name="location" id="">
+                <p class="formText">Comprobante de estado de cuenta</p><input type="file" name="accState" id="">
+                
+                <h3>Imagenes de utilidad</h3><br>
+                <p class="formText">Imagen de perfil</p><input type="file" name="thumbnail" id="">
+                <p class="formText">Imagen de foto</p><input type="file" name="image" id="">
+            </div>
+            
+            <button type="submit" class="submit">Subir archivos</button>
+        </form>
     {{else}}
         <a href="/login">Necesitas iniciar sesión para poder subir tus documentos</a>
     {{/if}}
 </main>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/documents.js"></script>
